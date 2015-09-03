@@ -1,0 +1,27 @@
+{
+  "name": "mr-devnt",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nytramr/mr-devnt.git"
+  },
+  "keywords": [
+    "javascript",
+    "html"
+  ],
+  "author": "Martin Rubinsztein",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nytramr/mr-devnt/issues"
+  },
+  "homepage": "https://github.com/Nytramr/mr-devnt#readme",
+  "devDependencies": {
+    "browser-sync": "^2.8.2",
+    "gulp": "^3.9.0"
+  }
+}

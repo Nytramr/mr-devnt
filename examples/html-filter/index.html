@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <form class="html-filter" action="#" method="post" mr-item-list="my-table">
+      <label for="lower-than">Lower</label>
+      <input type="text" mr-name="num-value" mr-comparison-type="<">
+      <label for="greater-than">Greater</label>
+      <input type="text" mr-name="num-value" mr-comparison-type=">">
+    </form>
+    <table id="my-table">
+      <tr>
+        <th>
+          ja
+        </th>
+      </tr>
+      <tr>
+        <td mr-item >
+          <span mr-name="num-value">1</span>
+        </td>
+      </tr>
+      <tr>
+        <td mr-item >
+          <span mr-name="num-value">5</span>
+        </td>
+      </tr>
+      <tr>
+        <td mr-item >
+          <span mr-name="num-value">10</span>
+        </td>
+      </tr>
+      <tr>
+        <td mr-item >
+          <span mr-name="num-value">15</span>
+        </td>
+      </tr>
+      <tr>
+        <td mr-item >
+          <span mr-name="num-value">100</span>
+        </td>
+      </tr>
+      <tr>
+        <td mr-item >
+          <span mr-name="num-value">150</span>
+        </td>
+      </tr>
+    </table>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="./mr-devnt.js"></script>
+  </body>
+</html>
