@@ -6,46 +6,77 @@
   </head>
   <body>
     <form class="html-filter" action="#" method="post" mr-item-list="my-table">
-      <label for="lower-than">Lower</label>
-      <input type="text" mr-name="num-value" mr-comparison-type="<">
-      <label for="greater-than">Greater</label>
-      <input type="text" mr-name="num-value" mr-comparison-type=">">
+      <div class="form-field">
+        <h3>Difference</h3>
+        <label for="lower-than">Lower</label>
+        <input id="lower-than" type="text" mr-name="num-value" mr-comparison-type="<">
+        <label for="greater-than">Greater</label>
+        <input id="greater-than" type="text" mr-name="num-value" mr-comparison-type=">">
+      </div>
+      <div class="form-field">
+        <h3>Equality</h3>
+        <label for="equals-to">Equals</label>
+        <input id="equals-to" type="text" mr-name="equals-to" mr-comparison-type="=">
+        <label for="not-equals-to">Not Equals</label>
+        <input id="not-equals-to" type="text" mr-name="equals-to" mr-comparison-type="!=">
+      </div>
+      <div class="form-field">
+        <h3>Checkboxes</h3>
+        <label for="green">Green</label>
+        <input id="green" type="checkbox" name="color" value="green" mr-name="color" mr-comparison-type="in">
+        <label for="red">Red</label>
+        <input id="red" type="checkbox" name="color" value="red" mr-name="color" mr-comparison-type="in">
+        <label for="blue">Blue</label>
+        <input id="blue" type="checkbox" name="color" value="blue" mr-name="color" mr-comparison-type="in">
+        <label for="other">Other</label>
+        <input id="other" type="text" name="color" mr-name="color" mr-comparison-type="in">
+      </div>
+      <div class="form-field">
+        <h3>Select - option</h3>
+        <select name="select" mr-name="equals-to" mr-comparison-type="equals-to">
+          <option value="a">Letra A</option>
+          <option value="b" selected>La b larga</option>
+          <option value="c">C</option>
+        </select>
+      </div>
     </form>
+
+    <h3>Data</h3>
     <table id="my-table">
       <tr>
-        <th>
-          ja
-        </th>
+        <th>num-value</th>
+        <th>Equals</th>
+        <th>checkbox values</th>
       </tr>
-      <tr>
-        <td mr-item >
-          <span mr-name="num-value">1</span>
-        </td>
+      <tr mr-item>
+        <td mr-name="num-value">1</td>
+        <td mr-name="equals-to">a</td>
+        <td mr-name="color">red</td>
       </tr>
-      <tr>
-        <td mr-item >
-          <span mr-name="num-value">5</span>
-        </td>
+      <tr mr-item>
+        <td><span mr-name="num-value">5</span></td>
+        <td><span>b</span></td>
+        <td mr-name="color">red</td>
       </tr>
-      <tr>
-        <td mr-item >
-          <span mr-name="num-value">10</span>
-        </td>
+      <tr mr-item>
+        <td><span mr-name="num-value">10</span></td>
+        <td><span mr-name="equals-to">a</span></td>
+
       </tr>
-      <tr>
-        <td mr-item >
-          <span mr-name="num-value">15</span>
-        </td>
+      <tr mr-item>
+        <td ><span mr-name="num-value">15</span></td>
+        <td><span mr-name="equals-to">c</span></td>
+        <td mr-name="color">green</td>
       </tr>
-      <tr>
-        <td mr-item >
-          <span mr-name="num-value">100</span>
-        </td>
+      <tr mr-item>
+        <td ><span mr-name="num-value">100</span></td>
+        <td><span mr-name="equals-to">b</span></td>
+        <td mr-name="color">red</td>
       </tr>
-      <tr>
-        <td mr-item >
-          <span mr-name="num-value">150</span>
-        </td>
+      <tr mr-item>
+        <td ><span mr-name="num-value">150</span></td>
+        <td><span mr-name="equals-to">a</span></td>
+        <td mr-name="color">yellow</td>
       </tr>
     </table>
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
