@@ -1,6 +1,125 @@
 
+//Element a
+function Elements() {
+  var arr = [ ];
+  arr.push.apply(arr, arguments);
+  arr.__proto__ = Elements.prototype;
+  return arr;
+}
+
+Elements.prototype = new Array;
+Elements.prototype.findByAttribute = function (attribute, value) {
+  var result = new Elements();
+
+  for (var i = 0; i < this.length; i++) {
+    for (var j = 0; j < this[i].children.length; j++) {
+      if(this[i].children[j].children.length){
+        this.push(this[i].children[j]);
+      }
+
+      var attrValue = this[i].children[j].getAttribute(attribute);
+      if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+        result.push(this[i].children[j]);
+      }
+    }
+  }
+  return result;
+};
+
+Elements.prototype.findFirstByAttribute = function (attribute, value) {
+
+  for (var i = 0; i < this.length; i++) {
+    for (var j = 0; j < this[i].children.length; j++) {
+      if(this[i].children[j].children.length){
+        this.push(this[i].children[j]);
+      }
+
+      var attrValue = this[i].children[j].getAttribute(attribute);
+      if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+        return this[i].children[j];
+      }
+    }
+  }
+  return null;
+};
+
+Elements.prototype.filterByAttribute = function (attribute, value) {
+  var result = new Elements();
+
+  for (var i = 0; i < this.length; i++) {
+    var attrValue = this[i].getAttribute(attribute);
+    if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+      result.push(this[i]);
+    }
+  }
+
+  return result;
+};
+
+Elements.prototype.show = function () {
+
+  for (var i = 0; i < this.length; i++) {
+    this[i].style.display = 'block';
+    this[i].style.visibility = 'visible';
+  }
+
+  return this;
+};
+
+Elements.prototype.hide = function () {
+
+  for (var i = 0; i < this.length; i++) {
+    this[i].style.display = 'none';
+    this[i].style.visibility = 'hidden';
+  }
+
+  return this;
+};
+
+var getElementsByAttribute = function (elem, attribute, value) {
+  return Elements.prototype.findByAttribute.call([elem], attribute, value);
+};
+
+document.addEventListener = document.addEventListener || function (eventName, cb){
+  document.attachEvent('on'+eventName, cb);
+};
+
+
+//(function (){
+//    if (document.querySelectorAll) {
+//      return function (elem, attribute, value) {
+//        var result = elem.querySelectorAll('[' + attribute + (value?'="' + value + '"]':']'));
+//        return Array.prototype.slice.call(result);
+//      };
+//    } else {
+//      return function (elem, attribute, value) {
+//        if (elem) {
+//          var result = [];
+//          elem.children
+//
+//          return result;
+//        }
+//      };
+//    }
+//  })();
+
 //These functions return true if the comparison fails and false on succeed
 (function mrNameSpace (argument) {
+
+  //Replace jQuery functions
+  //
+  // var getElementsByAttribute = (function (){
+  //   if (document.querySelectorAll) {
+  //     return function (elem, attribute, value) {
+  //       elem.querySelectorAll('[' + attribute +'="' + value + '""]')
+  //     };
+  //   } else {
+  //     return function (elem, attribute, value) {
+  //
+  //     };
+  //   }
+  // })();
+
   function greaterThan (value1, value2) {
     return +value1 <= +value2;
   }
@@ -85,24 +204,25 @@
   }
 
   function URItoFields (uri) {
-    
+
   }
 
   var htmlFilter = function (filterForm) {
-    var filterFields = $(filterForm).find('[mr-name]');
+    var filterFields = Elements(filterForm).findByAttribute('mr-name');
     var itemList = document.getElementById(filterForm.getAttribute('mr-item-list'));
 
     function execFilter () {
-      var items = $(itemList).find('[mr-item]');
+      var items = Elements(itemList).findByAttribute('mr-item');
       items.show();
       var fields = getFields(filterForm)
       for (var f = fields.length - 1; f >= 0; f--) {
         for (var i = items.length - 1; i >= 0; i--) {
-          var itemField = $(items[i]).find('[mr-name='+fields[f].name+']');
-          var itemValue = itemField.val() || itemField.text();
+          var itemField = Elements(items[i]).findFirstByAttribute('mr-name', fields[f].name);
+          var itemValue = itemField ? (itemField.value || itemField.innerText || itemField.innerHTML):null;
 
           if (comparisons[fields[f].comparison](itemValue, fields[f].value)) {
-            $(items[i]).hide();
+            items[i].style.display = 'none';
+            items[i].style.visibility = 'hidden';
           }
         }
       }
@@ -126,18 +246,21 @@
 
     if(params) {
       params = params.split('&');
-
       for (var i = params.length - 1; i >= 0; i--) {
         var options = /(.*?):(.*?)\((.*?)\)/.exec(params[i]);
-        var elem = filterFields.filter('[mr-name='+ options[1] + ']')
-          .filter('[mr-comparison-type="'+ options[2] + '"]');
+        var elem = filterFields.filterByAttribute('mr-name', options[1])
+          .filterByAttribute('mr-comparison-type', options[2]);
         if (elem.length === 1 && elem[0].type !== 'checkbox') {
-          elem.val(options[3]);
+          elem[0].value = options[3];
         } else {
           var values = options[3].split(',');
           for (var j = values.length-1; j >= 0; j--) {
-            var newElem = elem.filter('[value='+ values[j] + ']');
-            if (newElem.length)[0].checked = true;
+            var newElem = elem.filterByAttribute('value', values[j]);
+            if (newElem.length) {
+              newElem[0].checked = true;
+            } else {
+              elem.filterByAttribute('value', null)[0].value = values[j];
+            }
           }
         }
       }
