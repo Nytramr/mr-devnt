@@ -8,36 +8,55 @@ function Elements() {
 }
 
 Elements.prototype = new Array;
+
+function findByAttribute (attribute, value, result) {
+  for (var i = 0; i < this.length; i++) {
+    var attrValue = this[i].getAttribute(attribute);
+    if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+      result.push(this[i]);
+    }
+
+    if(this[i].children.length){
+      //Call recursively
+      findByAttribute.call(this[i].children, attribute, value, result);
+      // this.push(this[i].children[j]);
+    }
+  }
+}
+
 Elements.prototype.findByAttribute = function (attribute, value) {
-  var result = new Elements();
+  result = new Elements();
 
   for (var i = 0; i < this.length; i++) {
-    for (var j = 0; j < this[i].children.length; j++) {
-      if(this[i].children[j].children.length){
-        this.push(this[i].children[j]);
-      }
-
-      var attrValue = this[i].children[j].getAttribute(attribute);
-      if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
-        result.push(this[i].children[j]);
-      }
+    if(this[i].children.length){
+      findByAttribute.call(this[i].children, attribute, value, result);
     }
   }
   return result;
 };
 
+function findFirstByAttribute (attribute, value) {
+  for (var i = 0; i < this.length; i++) {
+    var attrValue = this[i].getAttribute(attribute);
+    if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+      return this[i];
+    }
+
+    if(this[i].children.length){
+      var result = findFirstByAttribute.call(this[i].children, attribute, value);
+      if (result) return result;
+    }
+  }
+  //Not found
+  return null;
+}
+
 Elements.prototype.findFirstByAttribute = function (attribute, value) {
 
   for (var i = 0; i < this.length; i++) {
-    for (var j = 0; j < this[i].children.length; j++) {
-      if(this[i].children[j].children.length){
-        this.push(this[i].children[j]);
-      }
-
-      var attrValue = this[i].children[j].getAttribute(attribute);
-      if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
-        return this[i].children[j];
-      }
+    if(this[i].children.length){
+      var result = findFirstByAttribute.call(this[i].children, attribute, value);
+      if (result) return result;
     }
   }
   return null;
@@ -104,21 +123,9 @@ document.addEventListener = document.addEventListener || function (eventName, cb
 //  })();
 
 //These functions return true if the comparison fails and false on succeed
-(function mrNameSpace (argument) {
+var mrNameSpace = (function (argument) {
 
-  //Replace jQuery functions
-  //
-  // var getElementsByAttribute = (function (){
-  //   if (document.querySelectorAll) {
-  //     return function (elem, attribute, value) {
-  //       elem.querySelectorAll('[' + attribute +'="' + value + '""]')
-  //     };
-  //   } else {
-  //     return function (elem, attribute, value) {
-  //
-  //     };
-  //   }
-  // })();
+  var self = {};
 
   function greaterThan (value1, value2) {
     return +value1 <= +value2;
@@ -233,7 +240,7 @@ document.addEventListener = document.addEventListener || function (eventName, cb
     //   execFilter();
     // });
 
-    //Prevent form to submit
+    //Prevent form to submit and change the navigation bar url
     filterForm.onsubmit = function (e){
       e.preventDefault();
       location.href = location.href.replace(/#.*/, '') + execFilter();
