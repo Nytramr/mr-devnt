@@ -28,11 +28,6 @@ describe("Element: ", function(){
       expect(result.length).toBe(1);
     });
 
-    it("Should find elements that have the attr1 attribute with the value 'four'", function(){
-      var result = Elements(container).findByAttribute('attr1', 'four');
-      expect(result.length).toBe(4);
-    });
-
     it("Shouldn't find elements that have the attr1 attribute with the value 'five'", function(){
       var result = Elements(container).findByAttribute('attr1', 'five');
       expect(result.length).toBe(0);
@@ -67,14 +62,43 @@ describe("Element: ", function(){
       expect(result.id).toBe('first-two');
     });
 
-    it("Should find the first element that has the attr1 attribute with the value 'four'", function(){
-      var result = Elements(container).findFirstByAttribute('attr1', 'four');
-      expect(result.id).toBe('first-four');
-    });
-
     it("Shouldn't find any first element that has the attr1 attribute with the value 'five'", function(){
       var result = Elements(container).findFirstByAttribute('attr1', 'five');
       expect(result).toBe(null);
+    });
+  });
+
+  describe("filterByAttribute: ", function(){
+    var collection;
+    beforeEach(function() {
+      loadFixtures('fixture-1.html');
+      var container = document.getElementById('container');
+      collection = Elements(container).findByAttribute('attr1');
+    });
+
+    it("Should filter every element that has the color attribute no matter its value", function(){
+      var result = collection.filterByAttribute('color');
+      expect(result.length).toBe(12);
+    });
+
+    it("Should filter every element that hasn not the color attribute", function(){
+      var result = collection.filterByAttribute('color', null);
+      expect(result.length).toBe(8);
+    });
+
+    it("Should filter every element that has the color attribute with the value 'red'", function(){
+      var result = collection.filterByAttribute('color', 'red');
+      expect(result.length).toBe(9);
+    });
+
+    it("Should filter every element that has the color attribute with the value 'black'", function(){
+      var result = collection.filterByAttribute('color', 'black');
+      expect(result.length).toBe(1);
+    });
+
+    it("Shouldn return an empty Array due to no color green is present", function(){
+      var result = collection.filterByAttribute('color', 'green');
+      expect(result.length).toBe(0);;
     });
   });
 });
