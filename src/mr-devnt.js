@@ -2,7 +2,13 @@
 //Element a
 function Elements() {
   var arr = [ ];
-  arr.push.apply(arr, arguments);
+  for (var i = 0; i < arguments.length; i++) {
+    if (arguments[i].length) {
+      arr.push.apply(arr, arguments[i]);
+    } else {
+      arr.push.call(arr, arguments[i]);
+    }
+  }
   arr.__proto__ = Elements.prototype;
   return arr;
 }
