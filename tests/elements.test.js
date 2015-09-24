@@ -5,7 +5,7 @@ describe("Element: ", function(){
   describe("findByAttribute: ", function(){
     var container;
     beforeEach(function() {
-      loadFixtures('fixture-1.html');
+      loadFixtures('elements.html');
       container = document.getElementById('container');
     });
     it("Should find elements that have the attr1 attribute no matter its value", function(){
@@ -37,7 +37,7 @@ describe("Element: ", function(){
   describe("findFirstByAttribute: ", function(){
     var container;
     beforeEach(function() {
-      loadFixtures('fixture-1.html');
+      loadFixtures('elements.html');
       container = document.getElementById('container');
     });
 
@@ -71,7 +71,7 @@ describe("Element: ", function(){
   describe("filterByAttribute: ", function(){
     var collection;
     beforeEach(function() {
-      loadFixtures('fixture-1.html');
+      loadFixtures('elements.html');
       var container = document.getElementById('container');
       collection = Elements(container).findByAttribute('attr1');
     });

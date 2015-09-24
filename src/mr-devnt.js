@@ -1,137 +1,158 @@
-
-//Element a
-function Elements() {
-  var arr = [ ];
-  for (var i = 0; i < arguments.length; i++) {
-    if (arguments[i].length) {
-      arr.push.apply(arr, arguments[i]);
-    } else {
-      arr.push.call(arr, arguments[i]);
-    }
-  }
-  arr.__proto__ = Elements.prototype;
-  return arr;
-}
-
-Elements.prototype = new Array;
-
-function findByAttribute (attribute, value, result) {
-  for (var i = 0; i < this.length; i++) {
-    var attrValue = this[i].getAttribute(attribute);
-    if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
-      result.push(this[i]);
-    }
-
-    if(this[i].children.length){
-      //Call recursively
-      findByAttribute.call(this[i].children, attribute, value, result);
-      // this.push(this[i].children[j]);
-    }
-  }
-}
-
-Elements.prototype.findByAttribute = function (attribute, value) {
-  result = new Elements();
-
-  for (var i = 0; i < this.length; i++) {
-    if(this[i].children.length){
-      findByAttribute.call(this[i].children, attribute, value, result);
-    }
-  }
-  return result;
-};
-
-function findFirstByAttribute (attribute, value) {
-  for (var i = 0; i < this.length; i++) {
-    var attrValue = this[i].getAttribute(attribute);
-    if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
-      return this[i];
-    }
-
-    if(this[i].children.length){
-      var result = findFirstByAttribute.call(this[i].children, attribute, value);
-      if (result) return result;
-    }
-  }
-  //Not found
-  return null;
-}
-
-Elements.prototype.findFirstByAttribute = function (attribute, value) {
-
-  for (var i = 0; i < this.length; i++) {
-    if(this[i].children.length){
-      var result = findFirstByAttribute.call(this[i].children, attribute, value);
-      if (result) return result;
-    }
-  }
-  return null;
-};
-
-Elements.prototype.filterByAttribute = function (attribute, value) {
-  var result = new Elements();
-
-  for (var i = 0; i < this.length; i++) {
-    var attrValue = this[i].getAttribute(attribute);
-    if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
-      result.push(this[i]);
-    }
-  }
-
-  return result;
-};
-
-Elements.prototype.show = function () {
-
-  for (var i = 0; i < this.length; i++) {
-    this[i].style.display = 'block';
-    this[i].style.visibility = 'visible';
-  }
-
-  return this;
-};
-
-Elements.prototype.hide = function () {
-
-  for (var i = 0; i < this.length; i++) {
-    this[i].style.display = 'none';
-    this[i].style.visibility = 'hidden';
-  }
-
-  return this;
-};
-
-var getElementsByAttribute = function (elem, attribute, value) {
-  return Elements.prototype.findByAttribute.call([elem], attribute, value);
-};
-
-document.addEventListener = document.addEventListener || function (eventName, cb){
-  document.attachEvent('on'+eventName, cb);
-};
-
-
-//(function (){
-//    if (document.querySelectorAll) {
-//      return function (elem, attribute, value) {
-//        var result = elem.querySelectorAll('[' + attribute + (value?'="' + value + '"]':']'));
-//        return Array.prototype.slice.call(result);
-//      };
-//    } else {
-//      return function (elem, attribute, value) {
-//        if (elem) {
-//          var result = [];
-//          elem.children
-//
-//          return result;
-//        }
-//      };
-//    }
-//  })();
-
 //These functions return true if the comparison fails and false on succeed
-var mrNameSpace = (function (argument) {
+var mrNameSpace = (function (self) {
 
-  var self = {};
+  self = self || {};
+
+  //Elements objects
+  function Elements() {
+    var arr = [ ];
+    for (var i = 0; i < arguments.length; i++) {
+      if (arguments[i].length) {
+        arr.push.apply(arr, arguments[i]);
+      } else {
+        arr.push.call(arr, arguments[i]);
+      }
+    }
+    arr.__proto__ = Elements.prototype;
+    return arr;
+  }
+
+  Elements.prototype = new Array;
+
+  function selectorToString (attribute, value) {
+    var selector = '[' + attribute;
+
+    if (value !== null) {
+      if (value !== undefined) {
+        selector += '=' + value;
+      }
+      selector += ']';
+    } else {
+      selector = ':not(' + selector + '])';
+    }
+
+    return selector;
+  }
+
+  function findByAttribute (attribute, value, result) {
+    for (var i = 0; i < this.length; i++) {
+      var attrValue = this[i].getAttribute(attribute);
+      if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+        result.push(this[i]);
+      }
+
+      if(this[i].children.length){
+        //Call recursively
+        findByAttribute.call(this[i].children, attribute, value, result);
+      }
+    }
+  }
+
+  Elements.prototype.findByAttribute = (function () {
+
+    if (document && document.querySelectorAll) {
+      //Return a function that use document.querySelector because it is several times faster
+      return function (attribute, value) {
+        var selector = selectorToString(attribute, value);
+
+        var result = new Elements();
+        for (var i = 0; i < this.length; i++) {
+          result.push.apply(result, this[i].querySelectorAll(selector));
+        }
+        return result;
+      };
+    }
+
+    return function (attribute, value) {
+      result = new Elements();
+
+      for (var i = 0; i < this.length; i++) {
+        if(this[i].children.length){
+          findByAttribute.call(this[i].children, attribute, value, result);
+        }
+      }
+      return result;
+    };
+  })();
+
+  function findFirstByAttribute (attribute, value) {
+    for (var i = 0; i < this.length; i++) {
+      var attrValue = this[i].getAttribute(attribute);
+      if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+        return this[i];
+      }
+
+      if(this[i].children.length){
+        var result = findFirstByAttribute.call(this[i].children, attribute, value);
+        if (result) return result;
+      }
+    }
+    //Not found
+    return null;
+  }
+
+  Elements.prototype.findFirstByAttribute = (function(){
+    if (document && document.querySelector) {
+      //Return a function that use document.querySelector because it is several times faster
+      return function (attribute, value) {
+        var selector = selectorToString(attribute, value);
+        for (var i = 0; i < this.length; i++) {
+          var result = this[i].querySelector(selector);
+          if (result) return result;
+        }
+        return null;
+      };
+    }
+
+    return function (attribute, value) {
+      for (var i = 0; i < this.length; i++) {
+        if(this[i].children.length){
+          var result = findFirstByAttribute.call(this[i].children, attribute, value);
+          if (result) return result;
+        }
+      }
+      return null;
+    };
+  })();
+
+  Elements.prototype.filterByAttribute = function (attribute, value) {
+    var result = new Elements();
+
+    for (var i = 0; i < this.length; i++) {
+      var attrValue = this[i].getAttribute(attribute);
+      if ((value !== undefined)?(attrValue == value):(attrValue !== null)) {
+        result.push(this[i]);
+      }
+    }
+
+    return result;
+  };
+
+  Elements.prototype.show = function () {
+
+    for (var i = 0; i < this.length; i++) {
+      this[i].style.display = '';
+      this[i].style.visibility = 'visible';
+    }
+
+    return this;
+  };
+
+  Elements.prototype.hide = function () {
+
+    for (var i = 0; i < this.length; i++) {
+      this[i].style.display = 'none';
+      this[i].style.visibility = 'hidden';
+    }
+
+    return this;
+  };
+  //Making it public
+  self.Elements = Elements;
+
+  /***************/
+  /* Form Filter */
+  /***************/
 
   function greaterThan (value1, value2) {
     return +value1 <= +value2;
@@ -242,10 +263,6 @@ var mrNameSpace = (function (argument) {
       return fieldsToURI(fields);
     }
 
-    // filterFields.on('change', function(e){
-    //   execFilter();
-    // });
-
     //Prevent form to submit and change the navigation bar url
     filterForm.onsubmit = function (e){
       e.preventDefault();
@@ -289,4 +306,17 @@ var mrNameSpace = (function (argument) {
   for (var i = filterForms.length-1; i >= 0; i--) {
     htmlFilter(filterForms[i]);
   }
-})();
+
+  return self;
+})(mrNameSpace);
+
+var Elements = Elements || mrNameSpace.Elements;
+
+
+function getElementsByAttribute (elem, attribute, value) {
+  return Elements.prototype.findByAttribute.call([elem], attribute, value);
+};
+
+document.addEventListener = document.addEventListener || function (eventName, cb){
+  document.attachEvent('on'+eventName, cb);
+};
