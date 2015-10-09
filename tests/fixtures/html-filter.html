@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <form class="html-filter" action="#" method="get" mr-item-list="my-table">
+      <!-- Text Boxes -->
+      <input id="lower-than" type="text" mr-name="num-value" mr-comparison-type="<">
+      <input id="greater-than" type="text" mr-name="num-value" mr-comparison-type=">">
+
+      <input id="equals-to" type="text" mr-name="equals-to" mr-comparison-type="=">
+      <input id="not-equals-to" type="text" mr-name="equals-to" mr-comparison-type="!=">
+      <!-- CheckBoxes -->
+      <input id="green" type="checkbox" name="color" value="green" mr-name="color" mr-comparison-type="in">
+      <input id="red" type="checkbox" name="color" value="red" mr-name="color" mr-comparison-type="in">
+      <input id="blue" type="checkbox" name="color" value="blue" mr-name="color" mr-comparison-type="in">
+      <input id="other" type="text" name="color" mr-name="color" mr-comparison-type="in">
+
+      <!-- Select Lists -->
+      <select name="select" mr-name="equals-to" mr-comparison-type="equals-to">
+        <option value="" selected>All</option>
+        <option value="a">Letra A</option>
+        <option value="b">La b larga</option>
+        <option value="c">C</option>
+      </select>
+
+
+      <input id="submit" type="submit" name="name" value="Filtrar">
+    </form>
+
+    <h3>Data</h3>
+    <table id="my-table">
+      <tr>
+        <th>num-value</th>
+        <th>Equals</th>
+        <th>checkbox values</th>
+      </tr>
+      <tr mr-item class="item">
+        <td mr-name="num-value">1</td>
+        <td mr-name="equals-to">a</td>
+        <td mr-name="color">red</td>
+      </tr>
+      <tr mr-item class="item">
+        <td><span mr-name="num-value">5</span></td>
+        <td><span>b</span></td>
+        <td mr-name="color">red</td>
+      </tr>
+      <tr mr-item class="item">
+        <td><span mr-name="num-value">10</span></td>
+        <td><span mr-name="equals-to">a</span></td>
+
+      </tr>
+      <tr mr-item class="item">
+        <td ><span mr-name="num-value">15</span></td>
+        <td><span mr-name="equals-to">c</span></td>
+        <td mr-name="color">green</td>
+      </tr>
+      <tr mr-item class="item">
+        <td ><span mr-name="num-value">100</span></td>
+        <td><span mr-name="equals-to">b</span></td>
+        <td mr-name="color">red</td>
+      </tr>
+      <tr mr-item class="item">
+        <td ><span mr-name="num-value">150</span></td>
+        <td><span mr-name="equals-to">a</span></td>
+        <td mr-name="color">yellow</td>
+      </tr>
+    </table>
+  </body>
+</html>

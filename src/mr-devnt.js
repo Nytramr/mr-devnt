@@ -1,13 +1,51 @@
-//These functions return true if the comparison fails and false on succeed
+
+
 var mrNameSpace = (function (self) {
 
   self = self || {};
 
+  //DOM ready
+  var onReadyCallbacks = [];
+  var domReady = false;
+  self.onDOMReady = function (cb) {
+    if(domReady){
+      cb();
+    } else {
+      onReadyCallbacks.push(cb);
+    }
+  };
+
+  function onReady () {
+    for (var i = 0; i < onReadyCallbacks.length; i++) {
+      onReadyCallbacks[i]();
+    }
+
+  }
+
+  if (document.attachEvent) {
+    //IE 9 or lower
+    document.addEventListener = document.addEventListener || function (eventName, cb){
+      document.attachEvent('on'+eventName, cb);
+    };
+
+    function onReadyIE () {
+      if (document.readyState === "complete"){
+        document.detachEvent("onreadystatechange", onReadyIE);
+        onReady();
+      }
+    }
+    document.attachEvent("onreadystatechange", onReadyIE);
+  } else {
+    document.addEventListener("DOMContentLoaded", onReady);
+  }
+
   //Elements objects
+  var rx = RegExp('^\\\[object Array|HTMLCollection\\\]$');
+
   function Elements() {
     var arr = [ ];
     for (var i = 0; i < arguments.length; i++) {
-      if (arguments[i].length) {
+      if (rx.test(Object.prototype.toString.call(arguments[i]))) {
         arr.push.apply(arr, arguments[i]);
       } else {
         arr.push.call(arr, arguments[i]);
@@ -18,6 +56,14 @@ var mrNameSpace = (function (self) {
   }
 
   Elements.prototype = new Array;
+
+  //add elements from a jQuery object
+  Elements.prototype.addJQuery = function (jQueryObj) {
+    for (var i = 0; i < jQueryObj.length; i++) {
+      this.push(jQueryObj[i]);
+    }
+    return this;
+  };
 
   function selectorToString (attribute, value) {
     var selector = '[' + attribute;
@@ -153,7 +199,7 @@ var mrNameSpace = (function (self) {
   /***************/
   /* Form Filter */
   /***************/
-
+  //These functions return true if the comparison fails and false on succeed
   function greaterThan (value1, value2) {
     return +value1 <= +value2;
   }
@@ -300,12 +346,20 @@ var mrNameSpace = (function (self) {
 
   };
 
-
-  var filterForms = document.getElementsByClassName('html-filter');
-
-  for (var i = filterForms.length-1; i >= 0; i--) {
-    htmlFilter(filterForms[i]);
+  function _loadPage () {
+    var filterForms = document.getElementsByClassName('html-filter');
+    //Just one filter per page
+    if (filterForms.length > 1) {
+      throw "Multiple html filters are not allowed";
+    }
+    if (filterForms.length == 1) {
+      htmlFilter(filterForms[0]);
+    }
   }
+
+  self.reloadPage = _loadPage;
+
+  self.onDOMReady(_loadPage);
 
   return self;
 })(mrNameSpace);
@@ -315,8 +369,4 @@ var Elements = Elements || mrNameSpace.Elements;
 
 function getElementsByAttribute (elem, attribute, value) {
   return Elements.prototype.findByAttribute.call([elem], attribute, value);
-};
-
-document.addEventListener = document.addEventListener || function (eventName, cb){
-  document.attachEvent('on'+eventName, cb);
 };
