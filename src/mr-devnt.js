@@ -346,7 +346,46 @@ var mrNameSpace = (function (self) {
 
   };
 
+  function applyData (element, data) {
+    switch (Object.prototype.toString.call(data)) {
+      case '[object Object]':
+        for (var key in data) {
+          if (key.startsWith('.')) { //Selector
+            var elem = element.querySelector(key);
+            applyData(elem, data[key]);
+          } else {
+            element.setAttribute(key, data[key]);
+          }
+        }
+        break;
+      case '[object Array]':
+        var elemAux = element, elemClone, parent = element.parentNode;
+        for (var i = 0; i < data.length; i++) {
+          elemClone = elemAux.cloneNode(true);
+          applyData(elemAux, data[i]);
+          parent.appendChild(elemAux);
+          elemAux = elemClone;
+        }
+        break;
+    }
+  }
+
+  var htmlTemplate = function (templatesContainer) {
+    var dataName = templatesContainer.getAttribute('template-data');
+    var data = window[dataName];
+    applyData(templatesContainer, data);
+  };
+
   function _loadPage () {
+
+    //Apply templates
+    var templates = Array.prototype.slice.call(document.getElementsByClassName('html-template'));
+
+
+    for (var i = 0; i < templates.length; i++) {
+      htmlTemplate(templates[i]);
+    }
+
     var filterForms = document.getElementsByClassName('html-filter');
     //Just one filter per page
     if (filterForms.length > 1) {
